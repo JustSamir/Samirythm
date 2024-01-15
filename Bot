@@ -2,9 +2,13 @@ import discord
 from discord.ext import commands
 import youtube_dl
 
-TOKEN = 'your_discord_bot_token_here'
+TOKEN = 'MTE5NjUwODA0ODgwNjY2MjE3Ng.Gcate9.zmm4RLOX7yb_t4BJdSS05Pq4xqafwwjGonTRdw'
 
-bot = commands.Bot(command_prefix='!')
+# Create an intents object
+intents = discord.Intents.all()  # You can adjust this based on your bot's needs
+
+bot = commands.Bot(command_prefix='!', intents=intents)
+
 
 @bot.event
 async def on_ready():
@@ -40,4 +44,4 @@ async def leave(ctx):
     # Disconnect from the voice channel
     await ctx.voice_client.disconnect()
 
-bot.run(TOKEN)
+bot.run('MTE5NjUwODA0ODgwNjY2MjE3Ng.Gcate9.zmm4RLOX7yb_t4BJdSS05Pq4xqafwwjGonTRdw')
