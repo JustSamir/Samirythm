@@ -4,23 +4,20 @@ import youtube_dl
 
 TOKEN = 'MTE5NjUwODA0ODgwNjY2MjE3Ng.GnYT6q.WDBimGCW05eEbPWxBraZoPIk8BzO_8TRMSeMY4'
 
-# Create an intents object
-intents = discord.Intents.all()  # You can adjust this based on your bot's needs
-
+intents = discord.Intents.default()
+intents.members = True  # Enable member updates for voice state tracking
 bot = commands.Bot(command_prefix='!', intents=intents)
-
 
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user.name}')
+    await bot.change_presence(activity=discord.Game(name='!play <song_name>'))
 
 @bot.command()
 async def play(ctx, *, query):
-    # Join the voice channel
     channel = ctx.author.voice.channel
     voice_channel = await channel.connect()
 
-    # Use youtube_dl to extract the video URL based on the query
     ydl_opts = {
         'format': 'bestaudio/best',
         'postprocessors': [{
@@ -34,14 +31,12 @@ async def play(ctx, *, query):
         info_dict = ydl.extract_info(query, download=False)
         url = info_dict.get("formats", [])[0]["url"]
 
-    # Play the YouTube video
     voice_channel.play(discord.FFmpegPCMAudio(url))
 
     await ctx.send(f'Now playing: {info_dict["title"]}')
 
 @bot.command()
 async def leave(ctx):
-    # Disconnect from the voice channel
     await ctx.voice_client.disconnect()
 
-bot.run('MTE5NjUwODA0ODgwNjY2MjE3Ng.GnYT6q.WDBimGCW05eEbPWxBraZoPIk8BzO_8TRMSeMY4')
+bot.run(TOKEN)
