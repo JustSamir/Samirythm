@@ -1,0 +1,16 @@
+const { Client } = require("discord.js");
+const client = new Client();
+
+client.once("ready", () => {
+  console.log("Bot is ready!");
+});
+
+client.on("message", (message) => {
+  if (message.content === "!ping") {
+    message.channel.send("Pong!");
+  }
+});
+
+client.login(
+  "MTE5NjUwODA0ODgwNjY2MjE3Ng.Gcate9.zmm4RLOX7yb_t4BJdSS05Pq4xqafwwjGonTRdw",
+);
