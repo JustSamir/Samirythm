@@ -1,16 +1,43 @@
-const { Client } = require("discord.js");
-const client = new Client();
+import discord
+from discord.ext import commands
+import youtube_dl
 
-client.once("ready", () => {
-  console.log("Bot is ready!");
-});
+TOKEN = 'your_discord_bot_token_here'
 
-client.on("message", (message) => {
-  if (message.content === "!ping") {
-    message.channel.send("Pong!");
-  }
-});
+bot = commands.Bot(command_prefix='!')
 
-client.login(
-  "MTE5NjUwODA0ODgwNjY2MjE3Ng.Gcate9.zmm4RLOX7yb_t4BJdSS05Pq4xqafwwjGonTRdw",
-);
+@bot.event
+async def on_ready():
+    print(f'Logged in as {bot.user.name}')
+
+@bot.command()
+async def play(ctx, *, query):
+    # Join the voice channel
+    channel = ctx.author.voice.channel
+    voice_channel = await channel.connect()
+
+    # Use youtube_dl to extract the video URL based on the query
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }],
+    }
+
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        info_dict = ydl.extract_info(query, download=False)
+        url = info_dict.get("formats", [])[0]["url"]
+
+    # Play the YouTube video
+    voice_channel.play(discord.FFmpegPCMAudio(url))
+
+    await ctx.send(f'Now playing: {info_dict["title"]}')
+
+@bot.command()
+async def leave(ctx):
+    # Disconnect from the voice channel
+    await ctx.voice_client.disconnect()
+
+bot.run(TOKEN)
